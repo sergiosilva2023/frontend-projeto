@@ -5,22 +5,15 @@ import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { Dialog } from 'primereact/dialog';
 import { FileUpload } from 'primereact/fileupload';
-import { InputNumber, InputNumberValueChangeEvent } from 'primereact/inputnumber';
 import { InputText } from 'primereact/inputtext';
-import { InputTextarea } from 'primereact/inputtextarea';
-import { RadioButton, RadioButtonChangeEvent } from 'primereact/radiobutton';
-import { Rating } from 'primereact/rating';
 import { Toast } from 'primereact/toast';
 import { Toolbar } from 'primereact/toolbar';
 import { classNames } from 'primereact/utils';
-import React, { useEffect, useRef, useState } from 'react';
-import { ProductService } from '../../../../demo/service/ProductService';
-import { Demo } from '@/types';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Projeto } from '@/types';
 import { UsuarioService } from '@/service/UsuarioService';
 
-/* @todo Used 'as any' for types here. Will fix in next version due to onSelectionChange event type issue. */
-const Crud = () => {
+const Usuario = () => {
     let usuarioVazio: Projeto.Usuario = {
         id: 0,
         nome: '',
@@ -34,12 +27,12 @@ const Crud = () => {
     const [deleteUsuarioDialog, setDeleteUsuarioDialog] = useState(false);
     const [deleteUsuariosDialog, setDeleteUsuariosDialog] = useState(false);
     const [usuario, setUsuario] = useState<Projeto.Usuario>(usuarioVazio);
-    const [selectedUsuarios, setSelectedUsuarios] = useState(null);
+    const [selectedUsuarios, setSelectedUsuarios] = useState<Projeto.Usuario[]>([]);
     const [submitted, setSubmitted] = useState(false);
     const [globalFilter, setGlobalFilter] = useState('');
     const toast = useRef<Toast>(null);
     const dt = useRef<DataTable<any>>(null);
-    const usuarioService = new UsuarioService;
+    const usuarioService = useMemo(() =>new UsuarioService(), []);
 
     useEffect(() =>{
         if(usuarios.length == 0){
@@ -51,7 +44,7 @@ const Crud = () => {
             console.log(error)
         });
     }
-    }, [usuarios]);
+    }, [usuarioService, usuarios]);
 
 
     const openNew = () => {
@@ -128,7 +121,7 @@ const Crud = () => {
     };
 
     const deleteUsuario = () => {
-
+        if(usuario.id){
         usuarioService.excluir(usuario.id).then((response) => {
             setUsuario(usuarioVazio);
             setDeleteUsuarioDialog(false);
@@ -146,20 +139,8 @@ const Crud = () => {
                 detail: 'Erro ao excluir usuário!' + error.data.message
             })
         })
-}
-
-   /* const findIndexById = (id: string) => {
-        let index = -1;
-        for (let i = 0; i < (usuarios as any)?.length; i++) {
-            if ((usuarios as any)[i].id === id) {
-                index = i;
-                break;
-            }
-        }
-
-        return index;
-    };*/
-
+    }
+};
 
     const exportCSV = () => {
         dt.current?.exportCSV();
@@ -169,26 +150,35 @@ const Crud = () => {
         setDeleteUsuariosDialog(true);
     };
 
-
-
     const deleteSelectedUsuarios = () => {
-       /* let _usuarios = (usuarios as any)?.filter((val: any) => !(selectedUsuarios as any)?.includes(val));
-        setUsuarios(_usuarios);
-        setDeleteUsuariosDialog(false);
-        setSelectedUsuarios(null);
-        toast.current?.show({
-            severity: 'success',
-            summary: 'Successful',
-            detail: 'Products Deleted',
-            life: 3000
-        });*/
+        
+        Promise.all(selectedUsuarios.map((_usuario) =>{
+            if(_usuario.id){
+            usuarioService.excluir(_usuario.id)
+            .then((response) =>{
+
+            }).catch((error) =>{
+
+            })
+        }
+        })).then((response) =>{
+            setUsuarios([]);
+            setSelectedUsuarios([]);
+            setDeleteUsuariosDialog(false);
+            toast.current?.show({
+                severity:'success',
+                summary: 'Sucesso!',
+                detail: 'Usuários excluidos com sucesso!'
+            })
+        }).catch((error) =>{
+            toast.current?.show({
+                severity:'error',
+                summary: 'Erro!',
+                detail: 'Não foi possivél excluir os usuários selecionados!'
+            })
+        })
     };
 
-    /*const onCategoryChange = (e: RadioButtonChangeEvent) => {
-        let _product = { ...product };
-        _product['category'] = e.value;
-        setProduct(_product);
-    };*/
 
     const onInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, name: string) => {
         const val = (e.target && e.target.value) || '';
@@ -198,13 +188,6 @@ const Crud = () => {
         setUsuario(_usuario);
     };
 
-   /* const onInputNumberChange = (e: InputNumberValueChangeEvent, name: string) => {
-        const val = e.value || 0;
-        let _product = { ...product };
-        _product[`${name}`] = val;
-
-        setProduct(_product);
-    };*/
 
     const leftToolbarTemplate = () => {
         return (
@@ -299,7 +282,7 @@ const Crud = () => {
     );
     const deleteUsuariosDialogFooter = (
         <>
-            <Button label="Não" icon="pi pi-times" text onClick={hideDeleteUsuariosDialog} />
+            <Button label="Não" icon="pi pi-times" text onClick={hideDeleteUsuarioDialog} />
             <Button label="Sim" icon="pi pi-check" text onClick={deleteSelectedUsuarios} />
         </>
     );
@@ -422,7 +405,7 @@ const Crud = () => {
                     <Dialog visible={deleteUsuariosDialog} style={{ width: '450px' }} header="Confirmar" modal footer={deleteUsuariosDialogFooter} onHide={hideDeleteUsuariosDialog}>
                         <div className="flex align-items-center justify-content-center">
                             <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem' }} />
-                            {usuario && <span>Deseja excluir os usuários selecionados?</span>}
+                            {usuario && <span>Deseja realmente excluir os usuários selecionados?</span>}
                         </div>
                     </Dialog>
                 </div>
@@ -431,4 +414,4 @@ const Crud = () => {
     );
 };
 
-export default Crud;
+export default Usuario;
