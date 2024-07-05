@@ -11,14 +11,27 @@ const AppMenu = () => {
     const { layoutConfig } = useContext(LayoutContext);
 
     const model: AppMenuItem[] = [
+        
         {
-            label: 'Home',
+            label: 'Entrada',
             items: [{ label: 'Dashboard', icon: 'pi pi-fw pi-home', to: '/' }]
         },
+
+
+
         {
-            label: 'Usuários',
+            label: 'Ferramentas da loja',
             items: [{ label: 'Usuários', icon: 'pi pi-fw pi-home', to: '/pages/usuario' }]
         },
+
+        {
+            label: 'Recursos',
+            items: [{ label: 'Recursos', icon: 'pi pi-fw pi-home', to: '/pages/recurso' }]
+        },
+
+
+
+
         {
             label: 'UI Components',
             items: [
