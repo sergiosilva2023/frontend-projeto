@@ -21,16 +21,11 @@ const AppMenu = () => {
 
         {
             label: 'Ferramentas da loja',
-            items: [{ label: 'Usuários', icon: 'pi pi-fw pi-home', to: '/pages/usuario' }]
+            items: [{ label: 'Usuários', icon: 'pi pi-fw pi-users', to: '/pages/usuario' },
+                     {label: 'Recursos', icon: 'pi pi-fw pi-thumbs-up', to: '/pages/recurso' },
+                     {label: 'Perfis', icon: 'pi pi-fw pi-align-justify', to: '/pages/perfil' }
+            ]
         },
-
-        {
-            label: 'Recursos',
-            items: [{ label: 'Recursos', icon: 'pi pi-fw pi-home', to: '/pages/recurso' }]
-        },
-
-
-
 
         {
             label: 'UI Components',

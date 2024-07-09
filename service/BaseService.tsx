@@ -34,6 +34,5 @@ export class BaseService{
         return axiosInstance.delete(this.url + "/" + id);
     }
 
-
 }
 

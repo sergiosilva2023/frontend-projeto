@@ -13,4 +13,20 @@ declare namespace Projeto {
         chave: string;
     };
 
+    type Perfil = {
+        id?: number;
+        descricao: string;
+    };
+
+    type PerfilUsuario = {
+        id?: number;
+        perfil: Perfil;
+        usuario: Usuario;
+    };
+
+    type PermissaoPerfilRecurso = {
+        id?: number;
+        perfil: Perfil;
+        recurso: Recurso;
+    };
 }
