@@ -13,6 +13,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Projeto } from '@/types';
 import { UsuarioService } from '@/service/UsuarioService';
 
+
 const Usuario = () => {
     let usuarioVazio: Projeto.Usuario = {
         id: 0,
@@ -124,8 +125,8 @@ const Usuario = () => {
     const deleteUsuario = () => {
         if(usuario.id){
         usuarioService.excluir(usuario.id).then((response) => {
-            setUsuario(usuarioVazio);
             setDeleteUsuarioDialog(false);
+            setUsuario(usuarioVazio);
             setUsuarios(null);
             toast.current?.show({
                 severity:'success',
